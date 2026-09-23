@@ -1,0 +1,10 @@
+## .NET
+bin/
+obj/
+*.user
+.vs/
+*.pubxml.user
+
+## Divers
+*.zip
+.DS_Store

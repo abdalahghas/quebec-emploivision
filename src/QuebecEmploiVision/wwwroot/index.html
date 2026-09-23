@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Québec EmploiVision</title>
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <span class="brand-mark">EQ</span>
+                <div>
+                    <div class="brand-name">EmploiVision</div>
+                    <div class="brand-sub">Québec</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <p class="nav-section">Analyses</p>
+                <button class="nav-item active" data-view="dashboard">Vue globale</button>
+                <button class="nav-item" data-view="employment">Emploi</button>
+                <button class="nav-item" data-view="professions">Professions</button>
+                <button class="nav-item" data-view="industries">Industries</button>
+                <button class="nav-item" data-view="regions">Régions</button>
+                <button class="nav-item" data-view="comparison">Comparateur</button>
+                <button class="nav-item" data-view="forecast">Prévisions</button>
+                <p class="nav-section">Gouvernance</p>
+                <button class="nav-item" data-view="quality">Data Quality</button>
+                <button class="nav-item" data-view="imports">Imports</button>
+                <button class="nav-item" data-view="pipeline">Pipeline</button>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+                <input class="global-search" id="globalSearch" type="search"
+                       placeholder="Rechercher une profession…" autocomplete="off" />
+                <div class="topbar-right">
+                    <button id="themeToggle" class="icon-button" aria-label="Mode sombre" title="Mode sombre">☾</button>
+                    <div class="user-chip">Analyste</div>
+                </div>
+            </header>
+
+            <section class="view active" id="view-dashboard">
+                <div class="view-head">
+                    <h1>Portrait du marché du travail</h1>
+                    <div class="filters">
+                        <select id="filterRegion"><option value="">Toutes les régions</option></select>
+                        <select id="filterIndustry"><option value="">Toutes les industries</option></select>
+                        <select id="filterYear"><option value="">Dernière année</option></select>
+                    </div>
+                </div>
+                <p class="note">Chiffres agrégés depuis l'entrepôt SQL Server. La provenance de chaque jeu de données est indiquée dans la page Imports.</p>
+                <div class="kpi-grid" id="kpiGrid">
+                    <div class="kpi skeleton"></div><div class="kpi skeleton"></div>
+                    <div class="kpi skeleton"></div><div class="kpi skeleton"></div>
+                </div>
+                <div class="panel">
+                    <h2>Évolution de l'emploi</h2>
+                    <canvas id="chartEmployment" height="120"></canvas>
+                </div>
+                <div class="panel-row">
+                    <div class="panel">
+                        <h2>Postes vacants</h2>
+                        <canvas id="chartVacancies" height="140"></canvas>
+                    </div>
+                    <div class="panel">
+                        <h2>Salaire horaire moyen</h2>
+                        <canvas id="chartWages" height="140"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="view" id="view-employment">
+                <div class="view-head"><h1>Évolution de l'emploi</h1></div>
+                <div class="panel">
+                    <h2>Nombre d'emplois, selon les filtres actifs</h2>
+                    <canvas id="chartEmploymentFull" height="150"></canvas>
+                </div>
+                <div class="panel">
+                    <h2>Lecture</h2>
+                    <p class="note" id="employmentNote">Sélectionnez des filtres dans la Vue globale : ils s'appliquent ici.</p>
+                </div>
+            </section>
+
+            <section class="view" id="view-professions">
+                <div class="view-head"><h1>Explorer les professions</h1>
+                    <input class="table-search" id="professionSearch" type="search" placeholder="Rechercher…" /></div>
+                <div class="panel">
+                    <table class="data-table" id="professionTable">
+                        <thead><tr><th>Code CNP</th><th>Profession</th><th>Emploi</th><th>Salaire moyen</th><th>Vacants</th></tr></thead>
+                        <tbody><tr><td colspan="5" class="skeleton-row"></td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="view" id="view-industries">
+                <div class="view-head"><h1>Industries</h1></div>
+                <div class="panel">
+                    <table class="data-table" id="industryTable">
+                        <thead><tr><th>Code SCIAN</th><th>Industrie</th><th>Emploi</th><th>Salaire moyen</th><th>Vacants</th></tr></thead>
+                        <tbody><tr><td colspan="5" class="skeleton-row"></td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="view" id="view-regions">
+                <div class="view-head"><h1>Régions du Québec</h1>
+                    <select id="regionSelect" class="inline-select"></select></div>
+                <div class="kpi-grid" id="regionKpi"></div>
+                <div class="panel"><h2 id="regionChartTitle">Historique de l'emploi</h2>
+                    <canvas id="chartRegion" height="130"></canvas></div>
+            </section>
+
+            <section class="view" id="view-comparison">
+                <div class="view-head"><h1>Comparateur de régions</h1>
+                    <div class="filters">
+                        <select id="compareLeft"></select>
+                        <span class="vs">vs</span>
+                        <select id="compareRight"></select>
+                    </div>
+                </div>
+                <div class="panel">
+                    <table class="data-table" id="comparisonTable">
+                        <thead><tr><th>Indicateur</th><th id="compareLeftName">—</th><th id="compareRightName">—</th></tr></thead>
+                        <tbody><tr><td colspan="3" class="skeleton-row"></td></tr></tbody>
+                    </table>
+                </div>
+                <div class="panel"><h2>Évolution comparée</h2>
+                    <canvas id="chartComparison" height="130"></canvas></div>
+            </section>
+
+            <section class="view" id="view-forecast">
+                <div class="view-head"><h1>Prévisions</h1>
+                    <div class="filters">
+                        <select id="forecastRegion"></select>
+                        <select id="forecastHorizon">
+                            <option value="3">3 périodes</option>
+                            <option value="5" selected>5 périodes</option>
+                            <option value="10">10 périodes</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel"><h2>Historique et projection (tendance linéaire)</h2>
+                    <canvas id="chartForecast" height="150"></canvas></div>
+                <div class="panel"><h2>Modèle</h2>
+                    <div class="model-grid" id="modelGrid"></div>
+                    <p class="note" id="methodologyNote"></p></div>
+            </section>
+
+            <section class="view" id="view-quality">
+                <div class="view-head"><h1>Qualité des données</h1></div>
+                <div class="panel">
+                    <div class="score-wrap">
+                        <div class="score-ring" id="scoreRing"><span id="scoreValue">—</span></div>
+                        <div class="score-bars" id="scoreBars"></div>
+                    </div>
+                </div>
+                <div class="panel"><h2>Anomalies détectées (IQR)</h2>
+                    <div id="anomalyList" class="anomaly-list"></div>
+                </div>
+            </section>
+
+            <section class="view" id="view-imports">
+                <div class="view-head"><h1>Importation de données</h1></div>
+                <div class="panel">
+                    <h2>Importer un CSV</h2>
+                    <form id="importForm" class="import-form">
+                        <select id="importDataset" required>
+                            <option value="EmploymentByRegionIndustry">Emploi par région et industrie</option>
+                            <option value="VacanciesByRegion">Postes vacants par région</option>
+                            <option value="WagesByProfession">Salaires par profession</option>
+                        </select>
+                        <input type="file" id="importFile" accept=".csv" required />
+                        <button type="submit" class="primary-button">Importer</button>
+                    </form>
+                    <div id="importResult" class="import-result" hidden></div>
+                </div>
+                <div class="panel">
+                    <h2>Historique des imports</h2>
+                    <table class="data-table" id="importHistory">
+                        <thead><tr><th>Date</th><th>Fichier</th><th>Statut</th><th>Lignes</th><th>Acceptées</th><th>Rejetées</th><th></th></tr></thead>
+                        <tbody><tr><td colspan="7" class="skeleton-row"></td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="view" id="view-pipeline">
+                <div class="view-head"><h1>Surveillance du pipeline</h1>
+                    <span class="status-pill" id="pipelineHealth">…</span></div>
+                <div class="panel"><h2>Sources</h2>
+                    <table class="data-table" id="pipelineTable">
+                        <thead><tr><th>Source</th><th>Dernier import</th><th>État</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="panel"><h2>Dernier pipeline</h2><div id="lastPipeline" class="pipeline-steps"></div></div>
+            </section>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>
