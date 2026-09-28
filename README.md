@@ -16,6 +16,16 @@ DONNÉES PUBLIQUES  →  INGESTION  →  STAGING SQL  →  VALIDATION
 
 Le système répond à : comment l'emploi évolue à Montréal, quelles professions varient le plus, comment les salaires évoluent, quelle région a le plus de postes vacants, et ce qu'une tendance statistique simple projette pour les prochaines périodes.
 
+## Inspiration : la production de statistiques officielles
+
+Le périmètre de données (postes vacants, salaires par profession, emploi par
+région et par industrie) reprend les thèmes d'enquêtes officielles comme
+l'Enquête sur les postes vacants et les salaires (EPVS) de Statistique Canada,
+et le pipeline reflète les mêmes étapes que la production de statistiques du
+marché du travail : collecte, validation, transformation, entrepôt de données,
+puis diffusion d'indicateurs fiables. C'est un exercice personnel d'ingénierie
+de données inspiré de ces processus, pas une reproduction de l'EPVS.
+
 ## Fonctionnalités
 
 - **Vue globale** : KPI (emplois, postes vacants, salaire moyen, variation annuelle) générés depuis SQL Server, jamais codés en dur, avec filtres région/industrie/année partagés par toute l'application.

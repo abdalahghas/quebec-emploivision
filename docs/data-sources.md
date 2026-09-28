@@ -16,6 +16,9 @@ officiels** : ils servent la démonstration du pipeline, pas l'analyse réelle.
   https://www150.statcan.gc.ca/
 - **Statistique Canada**, tableau **14-10-0355-01** : postes vacants selon la
   région et le secteur.
+- **Statistique Canada, EPVS** : Enquête sur les postes vacants et les
+  salaires, dont les thèmes (postes vacants par région, salaires par profession)
+  ont inspiré le périmètre de données de ce projet.
 - **Institut de la statistique du Québec (ISQ)** : enquêtes et statistiques du
   marché du travail — https://www.stat.gouv.qc.ca/
 - **Guichet emplois / emploi Québec** : offres et perspectives par profession.
